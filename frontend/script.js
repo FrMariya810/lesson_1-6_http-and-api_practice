@@ -9,6 +9,8 @@ const applicationForm = document.querySelector("#application-form")
 const submitButton = document.querySelector("#submit-button")
 const submitStatus = document.querySelector("#submit-status")
 
+const topicFilter = document.querySelector("#topic-filter")
+
 // Готовая вспомогательная функция переключает состояния списка.
 // Во время практики вызывайте ее с одним из значений:
 // loading, success, empty или error.
@@ -78,9 +80,15 @@ async function loadApplications() {
   setListState("loading", "Загружаем заявки…")
   reloadButton.disabled = true
 
+  const url = new URL(API_URL)
+  const topic = topicFilter.value
+  if (topic) {
+    url.searchParams.set("topic", topic)
+  }
+
   try {
     // TODO 2.1: выполните GET-запрос к API_URL и сохраните Response.
-    const response = await fetch(API_URL)
+    const response = await fetch(url)
 
     // TODO 4.1: если response.ok равен false, выбросьте Error со статусом.
     if (!response.ok) {
@@ -157,6 +165,8 @@ applicationForm.addEventListener("submit", async (event) => {
 })
 
 reloadButton.addEventListener("click", loadApplications)
+
+topicFilter.addEventListener("change", loadApplications)
 
 // Первый запрос выполняется сразу после загрузки страницы.
 loadApplications()
